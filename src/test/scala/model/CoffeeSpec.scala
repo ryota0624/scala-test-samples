@@ -70,4 +70,20 @@ class CoffeeProperSpec
       }
     }
   }
+
+  "mixin" should {
+    val amountGen = for {
+      first <- Gen.posNum[Int]
+      second <- Gen.posNum[Int]
+    } yield (first, second)
+    "return coffee amount be as same as added two coffee amount" in {
+      forAll(amountGen) {
+        case (first, second) =>
+          val firstCoffee = new Coffee(first)
+          val secondCoffee = new Coffee(second)
+          val mixed = firstCoffee.mix(secondCoffee)
+          mixed.amount shouldBe (first + second)
+      }
+    }
+  }
 }
