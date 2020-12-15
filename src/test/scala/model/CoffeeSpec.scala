@@ -3,8 +3,9 @@ package model
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.prop.TableDrivenPropertyChecks
 
-class CoffeeSpec extends AnyWordSpecLike with ScalaCheckDrivenPropertyChecks {
+class CoffeeSpec extends AnyWordSpecLike {
   "constructor" should {
     "throw error when received 0" in {
       an[IllegalArgumentException] should be thrownBy {
@@ -29,6 +30,28 @@ class CoffeeSpec extends AnyWordSpecLike with ScalaCheckDrivenPropertyChecks {
     "be as same as constructor passed amount" in {
       val amount = 1
       new Coffee(amount).amount shouldBe amount
+    }
+  }
+}
+
+class CoffeeTableDrivenSpec
+    extends AnyWordSpecLike
+    with TableDrivenPropertyChecks {
+  "constructor" should {
+    val amounts = Table(
+      ("statement", "amount"),
+      ("amount is zero", 0),
+      ("amount is negative number", -1)
+    )
+
+    forAll(amounts) { (statement, invalidAmount) =>
+      {
+        s"throw error when $statement" in {
+          an[IllegalArgumentException] should be thrownBy {
+            new Coffee(invalidAmount)
+          }
+        }
+      }
     }
   }
 }
