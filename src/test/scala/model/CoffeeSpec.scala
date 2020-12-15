@@ -1,5 +1,6 @@
 package model
 
+import org.scalacheck.Gen
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -50,6 +51,21 @@ class CoffeeTableDrivenSpec
           an[IllegalArgumentException] should be thrownBy {
             new Coffee(invalidAmount)
           }
+        }
+      }
+    }
+  }
+}
+
+class CoffeeProperSpec
+    extends AnyWordSpecLike
+    with ScalaCheckDrivenPropertyChecks {
+  "constructor" should {
+    val amountGen = Gen.posNum[Int]
+    "be as same as constructor passed amount" in {
+      forAll(amountGen) { amount =>
+        {
+          new Coffee(amount).amount shouldBe amount
         }
       }
     }
