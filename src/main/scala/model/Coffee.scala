@@ -1,4 +1,4 @@
-package data
+package model
 
 class Coffee(val amount: Int) {
   // コーヒーを混ぜ合わせる

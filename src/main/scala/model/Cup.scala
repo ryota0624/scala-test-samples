@@ -1,4 +1,4 @@
-package data
+package model
 
 class Cup private (val capacity: Int, val coffee: Option[Coffee]) {
   require(coffee.fold(0)(_.amount) < capacity, "capacity exceeded")
