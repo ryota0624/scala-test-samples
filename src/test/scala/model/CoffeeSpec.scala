@@ -27,6 +27,13 @@ class CoffeeSpec extends AnyWordSpecLike {
     }
   }
 
+  "apply" should {
+    "return Failure when received 0" in {
+      val coffee = Coffee(0)
+
+    }
+  }
+
   "amount" should {
     "be as same as constructor passed amount" in {
       val amount = 1
