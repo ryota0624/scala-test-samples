@@ -4,7 +4,11 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.matchers.should.Matchers._
 
 class ExceptionSpec extends AnyWordSpecLike {
-  class ClassData(val n: Int)
+  class ClassData(val n: Int) {
+    override def toString: String = {
+      s"ClassData($n)"
+    }
+  }
   case class CaseClassData(n: Int)
   "value" should {
     "equal defined case class" in {
@@ -23,6 +27,11 @@ class ExceptionSpec extends AnyWordSpecLike {
       val exception1 = new IllegalArgumentException("name")
       val exception2 = new IllegalArgumentException("name")
       exception1 shouldBe exception2
+    }
+
+    "assert exception" in {
+      val exception1 = new IllegalArgumentException("name")
+      exception1.getMessage shouldBe "name"
     }
   }
 }
