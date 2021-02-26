@@ -2,17 +2,13 @@ package model
 
 import com.dimafeng.testcontainers.{DockerComposeContainer, ExposedService, ForAllTestContainer}
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.OptionValues._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
 import software.amazon.awssdk.regions.Region
 
 import java.io.File
 import java.net.URI
 
 class DockerComposeMessagesSpec
-  extends AnyWordSpecLike
-    with Matchers
+  extends MessagesSpec
     with BeforeAndAfterAll
     with ForAllTestContainer {
   override val container: DockerComposeContainer =
@@ -41,12 +37,4 @@ class DockerComposeMessagesSpec
     messages
   }
 
-  "messages" should {
-    "追加済のメッセージを取得できる" in {
-      val message = Message("hello")
-      messages.add(message)
-      val messageOpt = messages.get(message.id)
-      messageOpt.value shouldBe message
-    }
-  }
 }

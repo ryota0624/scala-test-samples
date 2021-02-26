@@ -2,27 +2,50 @@ package model
 
 import com.dimafeng.testcontainers.{ForAllTestContainer, GenericContainer}
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.OptionValues._
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.testcontainers.images.builder.ImageFromDockerfile
 import software.amazon.awssdk.regions.Region
 
 import java.net.URI
 
 class GenericContainerMessagesSpec
-    extends AnyWordSpecLike
-    with Matchers
+    extends MessagesSpec
     with BeforeAndAfterAll
     with ForAllTestContainer {
+//  override val container: GenericContainer =
+//    GenericContainer(
+//      new ImageFromDockerfile().withDockerfile(
+//        Path.of(getClass.getResource("/Dockerfile").getFile)
+//      ),
+//      env = Map(
+//        "DEFAULT_REGION" -> "ap-northeast-1"
+//      ),
+//      exposedPorts = Seq(4566)
+//    )
+
   override val container: GenericContainer =
     GenericContainer(
-      "localstack/localstack",
+      new ImageFromDockerfile()
+        .withDockerfileFromBuilder(builder =>
+          builder
+            .from("localstack/localstack")
+            .env("SERVICES", "dynamodb")
+            .build()
+        ),
       env = Map(
         "DEFAULT_REGION" -> "ap-northeast-1",
-        "SERVICES" -> "dynamodb"
       ),
       exposedPorts = Seq(4566)
     )
+//
+//  override val container: GenericContainer =
+//    GenericContainer(
+//      "localstack/localstack",
+//      env = Map(
+//        "DEFAULT_REGION" -> "ap-northeast-1",
+//        "SERVICES" -> "dynamodb"
+//      ),
+//      exposedPorts = Seq(4566)
+//    )
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -43,15 +66,6 @@ class GenericContainerMessagesSpec
       ),
       Region.of("ap-northeast-1")
     )
-  }
-
-  "messages" should {
-    "追加済のメッセージを取得できる" in {
-      val message = Message("hello")
-      messages.add(message)
-      val messageOpt = messages.get(message.id)
-      messageOpt.value shouldBe message
-    }
   }
 }
 
