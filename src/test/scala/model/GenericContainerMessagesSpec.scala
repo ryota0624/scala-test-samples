@@ -1,28 +1,27 @@
 package model
 
-import com.dimafeng.testcontainers.{DockerComposeContainer, ExposedService, ForAllTestContainer}
+import com.dimafeng.testcontainers.{ForAllTestContainer, GenericContainer}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.OptionValues._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import software.amazon.awssdk.regions.Region
 
-import java.io.File
 import java.net.URI
 
-
-class MessagesSpec
+class GenericContainerMessagesSpec
     extends AnyWordSpecLike
     with Matchers
     with BeforeAndAfterAll
     with ForAllTestContainer {
-  override val container: DockerComposeContainer =
-    new DockerComposeContainer(
-      composeFiles =
-        new File(getClass.getResource("/docker-compose.yml").getFile),
-      Seq(
-        ExposedService("localstack", 4566)
-      )
+  override val container: GenericContainer =
+    GenericContainer(
+      "localstack/localstack",
+      env = Map(
+        "DEFAULT_REGION" -> "ap-northeast-1",
+        "SERVICES" -> "dynamodb"
+      ),
+      exposedPorts = Seq(4566)
     )
 
   override def beforeAll(): Unit = {
@@ -34,12 +33,14 @@ class MessagesSpec
   lazy val messages: MessagesOnDymamodb = {
     val (localstackContainerHost, localstackContainerHostPort) =
       (
-        container.getServiceHost("localstack", 4566),
-        container.getServicePort("localstack", 4566)
+        container.host,
+        container.mappedPort(4566)
       )
 
     MessagesOnDymamodb(
-      new URI(s"http://${localstackContainerHost}:${localstackContainerHostPort}"),
+      new URI(
+        s"http://${localstackContainerHost}:${localstackContainerHostPort}"
+      ),
       Region.of("ap-northeast-1")
     )
   }
@@ -104,4 +105,4 @@ new DockerComposeContainer()
 のようにfileとテスト中に接続するサービスの公開を指定して初期化します。
 ```
 
-*/
+  */
